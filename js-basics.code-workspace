@@ -1,0 +1,13 @@
+{
+	"folders": [
+		{
+			"path": "../js-basics"
+		},
+		{
+			"path": "."
+		}
+	],
+	"settings": {
+		"liveServer.settings.multiRootWorkspaceName": "JS-CrashCourse"
+	}
+}
