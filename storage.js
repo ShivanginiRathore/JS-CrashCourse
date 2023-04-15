@@ -3,7 +3,8 @@ const email = document.getElementById('email');
 // const userName = document.getElementById('name').value;
 // console.log(userName)
 const form = document.getElementById('my-form');
-form.addEventListener('submit', storeData);
+// static uniqueId = 0;
+form.addEventListener('submit', storeAsObject);
 
 function storeData(e){
 
@@ -16,6 +17,20 @@ function storeData(e){
     userName.value = '';
     email.value = '';
 
+}
 
 
+// QUESTION 11
+function storeAsObject(e){
+    e.preventDefault();
+    let ran = Math.floor(Math.random() * 100)
+    let myObj={
+        nameUser : userName.value,
+        emailUser : email.value
+
+    };
+    let myObj_serialized = JSON.stringify(myObj);
+    localStorage.setItem(`myObj${ran}`,myObj_serialized);
+    userName.value = '';
+    email.value = '';
 }
