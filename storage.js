@@ -23,14 +23,15 @@ function storeData(e){
 // QUESTION 11
 function storeAsObject(e){
     e.preventDefault();
-    let ran = Math.floor(Math.random() * 100)
+    let nameUser = userName.value;
+    let emailUser = email.value;
+    // let ran = Math.floor(Math.random() * 100)
     let myObj={
-        nameUser : userName.value,
-        emailUser : email.value
-
+        nameUser,
+        emailUser
     };
     let myObj_serialized = JSON.stringify(myObj);
-    localStorage.setItem(`myObj${ran}`,myObj_serialized);
+    localStorage.setItem(emailUser , myObj_serialized);
     userName.value = '';
     email.value = '';
 }
