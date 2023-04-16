@@ -4,7 +4,6 @@ const email = document.getElementById('email');
 // console.log(userName)
 const form = document.getElementById('my-form');
 const ul = document.getElementById('users');
-// static uniqueId = 0;
 form.addEventListener('submit', storeAsObject);
 ul.addEventListener('click',removeItemFromUI);
 
@@ -33,12 +32,20 @@ function storeAsObject(e){
         emailUser
     };
     let myObj_serialized = JSON.stringify(myObj);
+    // create list element and two button
     const item = document.createElement('li');
     const btn = document.createElement('button');
+    const editBtn = document.createElement('button');
+
     btn.textContent = 'Delete';
-    btn.classList = 'Button';
+    btn.classList = 'button';
+
+    editBtn.textContent = 'Edit';
+    editBtn.classList = 'edit button';
+
     item.appendChild(document.createTextNode(nameUser + '-' + emailUser));
     item.appendChild(btn);
+    item.appendChild(editBtn);
     ul.appendChild(item);
 
     localStorage.setItem(emailUser , myObj_serialized);
@@ -49,13 +56,18 @@ function storeAsObject(e){
 
 function removeItemFromUI(e){
     e.preventDefault();
-    // console.log(userName.value.type);
-    // console.log(JSON.stringify(userName.value));
 
-    if(e.target.classList.contains('Button')){
+    if(e.target.classList.contains('button')){
         let text = e.target.parentNode.firstChild.textContent;
-        let mailId = text.split('-')[1];
-        localStorage.removeItem(mailId);
+        let arrDetails = text.split('-');
+        localStorage.removeItem(arrDetails[1]);
+        
+        // edit functionality
+        if(e.target.classList.contains('edit')){
+            userName.value = arrDetails[0];
+            email.value = arrDetails[1];
+        }
         ul.removeChild(e.target.parentNode);
     }
+    
 }
