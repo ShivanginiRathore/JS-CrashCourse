@@ -10,9 +10,9 @@ ul.addEventListener('click',removeItemFromUI);
 // to fetch the details from Network
 function allStorage() {
     window.addEventListener("DOMContentLoaded", () => {
-        axios.get("https://crudcrud.com/api/bef2f6a52423441aa70259abb9574616/appintmentData")
+        axios.get("https://crudcrud.com/api/2db19c1936714b8aa64a194be9fd76e5/appintmentData")
         .then(response =>{
-            console.log(response);
+            // console.log(response);
             for (var i = 0; i<response.data.length; i++) {
                 showDataOnUI(response.data[i]);
             }  
@@ -29,9 +29,16 @@ allStorage();
 // QUESTION 11
 function storeAsObject(e){
     e.preventDefault();
+    let nameUser = userName.value;
+    let emailUser = email.value;
+
+    let myObj={
+        nameUser,
+        emailUser
+    }
     
     // Network call
-    axios.post("https://crudcrud.com/api/bef2f6a52423441aa70259abb9574616/appintmentData",myObj)
+    axios.post("https://crudcrud.com/api/2db19c1936714b8aa64a194be9fd76e5/appintmentData",myObj)
     .then(data => {
         showDataOnUI(data.data);
     })
@@ -54,12 +61,13 @@ function showDataOnUI(obj){
 
     editBtn.textContent = 'Edit';
     editBtn.classList = 'edit button';
+    item.setAttribute('id',obj._id);
 
     
     item.appendChild(document.createTextNode(visibleText));
     item.appendChild(btn);
     item.appendChild(editBtn);
-    item.innerHTML = item.innerHTML + `<span style='visibility:hidden'>${obj._id}</span>`;
+    // item.innerHTML = item.innerHTML + `<span style='visibility:hidden'>${obj._id}</span>`;
     // item.innerHTML = item.innerHTML + `<span style='visibility:hidden'>${obj}</span>`;
     ul.appendChild(item);
     
@@ -71,29 +79,19 @@ function removeItemFromUI(e){
     e.preventDefault();
 
     if(e.target.classList.contains('button')){
-        let text = e.target.parentNode.lastChild.textContent;
-        // console.log(text);
-        axios.delete(`https://crudcrud.com/api/bef2f6a52423441aa70259abb9574616/appintmentData/${text}`)
+        let text = e.target.parentNode.id;        
+
+        axios.delete(`https://crudcrud.com/api/2db19c1936714b8aa64a194be9fd76e5/appintmentData/${text}`)
         .then(mes => {
+            // edit functionality
+            if(e.target.classList.contains('edit')){
+                let arrDetails = e.target.parentNode.firstChild.textContent.split('-');
+                userName.value = arrDetails[0];
+                email.value = arrDetails[1];
+            }
             ul.removeChild(e.target.parentNode);
-            console.log(mes);
         })
-        .catch(err => console.log((err)))
-
-        // axios.delete("https://crudcrud.com/api/bef2f6a52423441aa70259abb9574616/appintmentData",text)
-        // .then(mes => {
-        //     ul.removeChild(e.target.parentNode);
-        //     console.log(mes);
-        // })
-        // .catch(err => console.log((err)))
-
-        
-        // // edit functionality
-        // if(e.target.classList.contains('edit')){
-        //     userName.value = arrDetails[0];
-        //     email.value = arrDetails[1];
-        // }
-        // ul.removeChild(e.target.parentNode);
+        .catch(err => console.log((err)))     
     }
     
 }
