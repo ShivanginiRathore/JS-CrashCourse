@@ -7,19 +7,6 @@ const ul = document.getElementById('users');
 form.addEventListener('submit', storeAsObject);
 ul.addEventListener('click',removeItemFromUI);
 
-function storeData(e){
-
-    e.preventDefault();
-    
-    // console.log('UserName -> ' + userName)
-    // console.log('text content -> ' + userName.textContent)
-    
-    localStorage.setItem(userName.value, email.value);
-    userName.value = '';
-    email.value = '';
-
-}
-
 
 // QUESTION 11
 function storeAsObject(e){
@@ -33,6 +20,25 @@ function storeAsObject(e){
     };
     let myObj_serialized = JSON.stringify(myObj);
     // create list element and two button
+    let visibleText = nameUser + '-' + emailUser;
+    
+
+
+    axios.post("https://crudcrud.com/api/bef2f6a52423441aa70259abb9574616/appintmentData",myObj)
+    .then(data => {
+        showDataOnUI(visibleText);
+        // console.log(data);
+    })
+    .catch(err=>{
+        document.body.innerHTML = document.body.innerHTML + "Something went wrong";
+        console.log(err)
+    });
+    // localStorage.setItem(emailUser , myObj_serialized);
+    userName.value = '';
+    email.value = '';
+}
+
+function showDataOnUI(visibleText){
     const item = document.createElement('li');
     const btn = document.createElement('button');
     const editBtn = document.createElement('button');
@@ -43,14 +49,11 @@ function storeAsObject(e){
     editBtn.textContent = 'Edit';
     editBtn.classList = 'edit button';
 
-    item.appendChild(document.createTextNode(nameUser + '-' + emailUser));
+    item.appendChild(document.createTextNode(visibleText));
     item.appendChild(btn);
     item.appendChild(editBtn);
     ul.appendChild(item);
 
-    localStorage.setItem(emailUser , myObj_serialized);
-    userName.value = '';
-    email.value = '';
 }
 
 
