@@ -7,6 +7,24 @@ const ul = document.getElementById('users');
 form.addEventListener('submit', storeAsObject);
 ul.addEventListener('click',removeItemFromUI);
 
+// to fetch the details from Network
+function allStorage() {
+    window.addEventListener("DOMContentLoaded", () => {
+        axios.get("https://crudcrud.com/api/bef2f6a52423441aa70259abb9574616/appintmentData")
+        .then(response =>{
+            console.log(response);
+            for (var i = 0; i<response.data.length; i++) {
+                showDataOnUI(response.data[i]);
+            }  
+        })
+        .catch(err=>{
+            console.log(err);
+        });
+    })
+    
+
+}
+allStorage();
 
 // QUESTION 11
 function storeAsObject(e){
@@ -19,14 +37,10 @@ function storeAsObject(e){
         emailUser
     };
     let myObj_serialized = JSON.stringify(myObj);
-    // create list element and two button
-    let visibleText = nameUser + '-' + emailUser;
-    
-
-
+    // Network call
     axios.post("https://crudcrud.com/api/bef2f6a52423441aa70259abb9574616/appintmentData",myObj)
     .then(data => {
-        showDataOnUI(visibleText);
+        showDataOnUI(myObj);
         // console.log(data);
     })
     .catch(err=>{
@@ -38,7 +52,8 @@ function storeAsObject(e){
     email.value = '';
 }
 
-function showDataOnUI(visibleText){
+function showDataOnUI(obj){
+    let visibleText = obj.nameUser + '-' + obj.emailUser;
     const item = document.createElement('li');
     const btn = document.createElement('button');
     const editBtn = document.createElement('button');
