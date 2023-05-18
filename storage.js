@@ -1,7 +1,7 @@
+console.log('Hello from js');
+
 const userName = document.getElementById('name');
 const email = document.getElementById('email');
-// const userName = document.getElementById('name').value;
-// console.log(userName)
 const form = document.getElementById('my-form');
 const ul = document.getElementById('users');
 form.addEventListener('submit', storeAsObject);
@@ -12,7 +12,6 @@ function allStorage() {
     window.addEventListener("DOMContentLoaded", () => {
         axios.get("https://crudcrud.com/api/2db19c1936714b8aa64a194be9fd76e5/appintmentData")
         .then(response =>{
-            // console.log(response);
             for (var i = 0; i<response.data.length; i++) {
                 showDataOnUI(response.data[i]);
             }  
