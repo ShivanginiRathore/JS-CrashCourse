@@ -40,3 +40,19 @@ exports.addUserDetail = (req, res, next) => {
     })
     .catch(err => console.log(err));
 }
+
+exports.deleteUser = (req, res, next) => {
+    const userId = req.params.id;
+    // console.log('user id is -------------------------', userId);
+    // console.log('body is -------------------------', req.params);
+
+    User.findByPk(userId)
+    .then(user => {
+        user.destroy();
+    })
+    .then(result => {
+      console.log('Destroyed Product');
+      res.json();
+    })
+    .catch(err => console.log(err));
+}

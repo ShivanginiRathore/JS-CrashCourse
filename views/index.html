@@ -66,7 +66,7 @@
 
             editBtn.textContent = 'Edit';
             editBtn.classList = 'edit button';
-            item.setAttribute('id',obj._id);
+            item.setAttribute('id',obj.id);
 
             
             item.appendChild(document.createTextNode(visibleText));
@@ -114,8 +114,8 @@
 
             if(e.target.classList.contains('button')){
                 let text = e.target.parentNode.id;        
-                console.log("inside delete btn functionality")
-                // await axios.delete(`https://localhost:3000/deleteUser/${text}`)
+                console.log("inside delete btn functionality", text);
+                await axios.delete(`http://localhost:3000/deleteUser/${text}`)
                 
                     // edit functionality
                     if(e.target.classList.contains('edit')){
