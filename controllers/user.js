@@ -1,58 +1,31 @@
+const { log } = require('console');
 const User = require('../models/user');
 const path = require('path');
 const rootDir = path.dirname(process.mainModule.filename);
 
-exports.getUsers = (req, res, next) => {
-    User.findAll()
-    .then(products => {
-        res.sendFile(path.join(rootDir,'views','index.html'));
-        // res.json(products);
-    })
-    .catch(err => console.log(err));
+exports.loadPage = (req, res, next) => {
+    res.sendFile(path.join(rootDir,'views','index.html'));
 }
 
-exports.getAllUsers = (req, res, next) => {
-    User.findAll()
-    .then(products => {
-        // console.log(products);
-        res.json(products);
-    })
-    .catch(err => console.log(err));
+exports.signUpUser = async (req, res, next) => {
+    // console.log("in sign up ------- ");
+try{
+    const name = req.body.name;
+    const email = req.body.email;
+    const password = req.body.password;
+
+    // const { name, email, password } = req.body;
+    // console.log(name, email, password);
+    if(name == undefined || name.length === 0 
+        || email == undefined || email.length === 0
+        || password == undefined || password.length === 0){
+        return res.status(400).json({err: "Bad parameters"});
+    }
+    await User.create({name, email, password})
+    
+        res.status(201).json({message: 'Successfully created new user'});
 }
-
-exports.addUserDetail = (req, res, next) => {
-    console.log("inside add user detail");
-    console.log(req.body);
-
-    const userName = req.body.name;
-    const userEmail = req.body.email;
-    const userNumber = req.body.phoneNumber;
-    console.log(userName, userEmail, userNumber);
-
-    User.create({
-        name: userName,
-        email: userEmail,
-        phoneNumber: userNumber
-    })
-    .then(result => {
-        console.log('Data Added Succesfully');
-        res.json();
-    })
-    .catch(err => console.log(err));
-}
-
-exports.deleteUser = (req, res, next) => {
-    const userId = req.params.id;
-    // console.log('user id is -------------------------', userId);
-    // console.log('body is -------------------------', req.params);
-
-    User.findByPk(userId)
-    .then(user => {
-        user.destroy();
-    })
-    .then(result => {
-      console.log('Destroyed Product');
-      res.json();
-    })
-    .catch(err => console.log(err));
+    catch(err){
+         res.status(500).json(err);
+    }
 }
