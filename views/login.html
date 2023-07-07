@@ -23,7 +23,7 @@
 
                 <button type="submit" value="Submit" >Login</button>
             </div>
-            <a href="">New User? Sign up now</a>
+            <a href="../signup">New User? Sign up now</a>
             
         </form>
         
@@ -47,7 +47,7 @@
             if(response.status === 200){
                 document.body.innerHTML += `<div style="color:green;"> ${response.data.message} </div>`;
             }
-            else if(response.status === 205){
+            else if(response.status === 401){
                 document.body.innerHTML += `<div style="color:red;"> ${response.data.message} </div>`;
             } else {
                 document.body.innerHTML += `<div style="color:red;"> ${response.data.message} </div>`;
