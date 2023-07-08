@@ -49,7 +49,9 @@ try{
                 throw new Error('Something went wrong');
             }
             if(result === true){
-                res.status(200).json({message: 'Successfully logged in'});
+                res.sendFile(path.join(rootDir,'views','expense.html'));
+                // res.status(200).json({message: 'Successfully logged in'});
+                // return res.redirect('/expense');
 
             } else {
                 res.status(401).json({message: 'Incorrect password'});

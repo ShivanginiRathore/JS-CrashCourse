@@ -41,11 +41,11 @@
                 email : e.target.email.value,
                 password : e.target.password.value
             }
-            // console.log('User details are----',myObj);
             const response = await axios.post("http://localhost:3000/login",loginDetails)
             console.log("response is --------------------- ",response);
             if(response.status === 200){
-                document.body.innerHTML += `<div style="color:green;"> ${response.data.message} </div>`;
+                await axios.get("http://localhost:3000/expense")
+                // document.body.innerHTML += `<div style="color:green;"> ${response.data.message} </div>`;
             }
             else if(response.status === 401){
                 document.body.innerHTML += `<div style="color:red;"> ${response.data.message} </div>`;
@@ -55,6 +55,7 @@
             e.target.name.value = ""
             e.target.email.value = ""
             e.target.password.value = ""
+
             }
         catch(err){
             document.body.innerHTML += `<div style="color:red;"> ${err} </div>`;

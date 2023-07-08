@@ -13,6 +13,7 @@ app.use(cors());
 app.set('views', 'views');
 
 const userRoutes = require('./routes/user');
+const expenseRoutes = require('./routes/expense');
 
 app.use(bodyParser.json());
 // app.use(bodyParser.urlencoded({ extended: false }));
@@ -20,6 +21,7 @@ app.use(bodyParser.json());
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use(userRoutes);
+app.use(expenseRoutes);
 
 sequelize.sync().then(result => {
     app.listen(3000);
