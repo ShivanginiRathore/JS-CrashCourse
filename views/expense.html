@@ -70,10 +70,11 @@
             ul.appendChild(item);
         }
 
-        // to fetch all data from UI
+        // to fetch all data from backend
         function allStorage() {
             window.addEventListener("DOMContentLoaded", async () => {
-                const allUsers = await axios.get("http://localhost:3000/getExpenses");
+                const token = localStorage.getItem('token');
+                const allUsers = await axios.get("http://localhost:3000/getExpenses", {headers: {"Authorization": token}});
                 allUsers.data.forEach(user => {
                     showDataOnUI(user);
                 });
@@ -85,7 +86,6 @@
 
         async function storeAsObject(e){
             e.preventDefault();
-            // console.log('inside submit button');
             let amount = expenseAmount.value;
             let description = expenseDesc.value;
             let category = expenseCategory.value;
@@ -95,9 +95,10 @@
                 description,
                 category
             }
-            // console.log('User details are----',myObj);
-            const expenses = await axios.post("http://localhost:3000/expense",myObj)
-            console.log(expenses);
+            const token = localStorage.getItem('token');
+            const expenses = await axios.post("http://localhost:3000/expense",myObj, {headers: {"Authorization": token}})
+            // console.log(expenses.data.expense);
+            showDataOnUI(expenses.data.expense);
             expenseAmount.value = '';
             expenseDesc.value = '';
             expenseCategory.value = '';
@@ -107,22 +108,11 @@
             e.preventDefault();
 
             if(e.target.classList.contains('button')){
-                let id = e.target.parentNode.id;        
-                console.log("inside delete btn functionality", id);
+                let id = e.target.parentNode.id;     
                 await axios.delete(`http://localhost:3000/deleteExpense/${id}`)
-                
-                    // edit functionality
-                    // if(e.target.classList.contains('edit')){
-                    //     let arrDetails = e.target.parentNode.firstChild.textContent.split('-');
-                    //     userName.value = arrDetails[0];
-                    //     email.value = arrDetails[1];
-                    // }
-                    ul.removeChild(e.target.parentNode);
-               
+                ul.removeChild(e.target.parentNode);
             }
-            
         }
-    
     </script>
 </body>
 </html>

@@ -42,10 +42,11 @@
                 password : e.target.password.value
             }
             const response = await axios.post("http://localhost:3000/login",loginDetails)
-            console.log("response is --------------------- ",response);
             if(response.status === 200){
-                await axios.get("http://localhost:3000/expense")
-                // document.body.innerHTML += `<div style="color:green;"> ${response.data.message} </div>`;
+                document.body.innerHTML += `<div style="color:green;"> ${response.data.message} </div>`;
+                
+                localStorage.setItem('token', response.data.token)
+                window.location.href = "../expense"
             }
             else if(response.status === 401){
                 document.body.innerHTML += `<div style="color:red;"> ${response.data.message} </div>`;

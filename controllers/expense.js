@@ -3,29 +3,33 @@ const path = require('path');
 const rootDir = path.dirname(process.mainModule.filename);
 
 exports.loadExpensePage = (req, res, next) => {
-    // res.redirect('localhost:3000/expense.html');
-    console.log("inside load expense page")
-    // return res.redirect('/expense');
-
     res.sendFile(path.join(rootDir,'views','expense.html'));
 }
 
 exports.getAllExpenses = async (req, res, next) => {
-    
     try{
-        const expenses = await Expense.findAll();
+        const userId = req.user.id;
+        // const expenses = req.user.getExpenses()   >>>>>>> Shorter query
+        const expenses = await Expense.findAll({where: {userId: userId}});
         res.json(expenses);
     }
     catch(err) {
         console.log(err)
+        return res.status(500).json({error: err, success: false})
     }
 }
 
 exports.addExpense = async (req, res, next) => {
     try{   
         const { amount, description, category } = req.body;
-        await Expense.create({amount, description, category});
-        res.json();
+
+        if (amount == undefined || amount.length === 0 || description == undefined){
+            res.status(404).json({message: 'Parameters are missing'});
+        }
+        // const expense = await Expense.create({amount, description, category, userId});
+        const expense = await req.user.createExpense({amount, description, category})
+        res.status(201).json({expense});
+
         }
     catch(err){
         console.log(err)

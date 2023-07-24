@@ -1,7 +1,7 @@
-const { log } = require('console');
 const User = require('../models/user');
 const path = require('path');
 const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
 const rootDir = path.dirname(process.mainModule.filename);
 
 exports.loadPage = (req, res, next) => {
@@ -34,6 +34,10 @@ try{
     }
 }
 
+function generateAccessToken(id){
+    return jwt.sign({userId : id}, 'longtoken')
+}
+
 exports.loginUser = async (req, res, next) => {
 try{
     const { email, password } = req.body;
@@ -49,9 +53,7 @@ try{
                 throw new Error('Something went wrong');
             }
             if(result === true){
-                res.sendFile(path.join(rootDir,'views','expense.html'));
-                // res.status(200).json({message: 'Successfully logged in'});
-                // return res.redirect('/expense');
+                res.status(200).json({message: 'Successfully logged in', token: generateAccessToken(user[0].id)});
 
             } else {
                 res.status(401).json({message: 'Incorrect password'});
