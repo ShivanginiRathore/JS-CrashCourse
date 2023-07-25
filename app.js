@@ -14,8 +14,11 @@ app.set('views', 'views');
 
 const userRoutes = require('./routes/user');
 const expenseRoutes = require('./routes/expense');
+const purchaseRoutes = require('./routes/purchase');
+
 const Expense = require('./models/expense');
 const User = require('./models/user');
+const Order = require('./models/order');
 
 app.use(bodyParser.json());
 // app.use(bodyParser.urlencoded({ extended: false }));
@@ -24,11 +27,15 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.use(userRoutes);
 app.use(expenseRoutes);
+app.use(purchaseRoutes)
 
 User.hasMany(Expense);
 Expense.belongsTo(User);
 
-sequelize.sync().then(result => {
+User.hasMany(Order);
+Order.belongsTo(User);
+
+sequelize.sync({force:true}).then(result => {
     app.listen(3000);
 })
 .catch(err => console.log(err));

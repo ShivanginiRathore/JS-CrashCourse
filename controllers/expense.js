@@ -36,18 +36,25 @@ exports.addExpense = async (req, res, next) => {
     }
 }
 
-exports.deleteExpense = (req, res, next) => {
-    const userId = req.params.id;
-    // console.log('user id is -------------------------', userId);
-    // console.log('body is -------------------------', req.params);
+exports.deleteExpense = async (req, res, next) => {
+    try{
+        const expenseId = req.params.id;
+        const userId = req.user.id;
 
-    Expense.findByPk(userId)
-    .then(expense => {
-        expense.destroy();
-    })
-    .then(result => {
-      console.log('Destroyed expense');
-      res.json();
-    })
-    .catch(err => console.log(err));
+        if(expenseId == undefined || expenseId.length === 0){
+            return res.status(400).json({success: false})
+        }
+
+        const resultRows = await Expense.destroy({where: {id : expenseId, userId : userId}})
+        if(resultRows === 0){
+            return res.status(404).json({success: false, message: 'Expense doesnt belongs to the user'});
+        }
+        
+        return res.status(200).json({success: true, message: 'Deleted successfully'});
+
+    } catch(err){
+        console.log(err);
+        return res.status(500).json({success: false, message: 'Failed'});
+
+    }
 }
