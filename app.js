@@ -27,7 +27,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.use(userRoutes);
 app.use(expenseRoutes);
-app.use(purchaseRoutes)
+app.use(purchaseRoutes);
 
 User.hasMany(Expense);
 Expense.belongsTo(User);
@@ -35,7 +35,7 @@ Expense.belongsTo(User);
 User.hasMany(Order);
 Order.belongsTo(User);
 
-sequelize.sync({force:true}).then(result => {
+sequelize.sync().then(result => {
     app.listen(3000);
 })
 .catch(err => console.log(err));
