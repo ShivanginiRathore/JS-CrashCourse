@@ -10,9 +10,5 @@ router.use('/purchasePremium', userAuthentication.authenticate, purchaseControll
 
 router.use('/updatetransactionstatus', userAuthentication.authenticate, purchaseController.updateTransactionStatus);
 
-router.use('/premiumLeaderboard', purchaseController.premiumLeaderboard);
-
-router.use('/findUserName', purchaseController.findUserNameByExpenseUserId);
-
 
 module.exports = router;

@@ -178,11 +178,9 @@
         }
 
 
-        async function showDataOnLeaderboard(expense){
-            const userId = expense.userId;
-            const userName = await axios.post('http://localhost:3000/findUserName', {userId});
+        async function showDataOnLeaderboard(leaderboardData){
 
-            let visibleText = `Name ${userName.data.name} & Total expense - ${expense.totalPrice}`;
+            let visibleText = `Name - ${leaderboardData.name} & Total expense - ${leaderboardData.totalPrice}`;
             const item = document.createElement('li');
             
             item.appendChild(document.createTextNode(visibleText));
@@ -195,8 +193,8 @@
             document.getElementById('leaderboardSection').style.display = "block";
             const response = await axios.post('http://localhost:3000/premiumLeaderboard');
 
-            response.data.forEach(expenseData => {
-                    showDataOnLeaderboard(expenseData);
+            response.data.forEach(leaderboardData => {
+                    showDataOnLeaderboard(leaderboardData);
                 });
 
         }
