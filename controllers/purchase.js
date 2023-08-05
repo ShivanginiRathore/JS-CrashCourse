@@ -1,8 +1,5 @@
 const Razorpay = require('razorpay');
 const Order = require('../models/order');
-const Expense = require('../models/expense');
-const sequelize = require('sequelize');
-const User = require('../models/user');
 
 exports.purchasePremium = (req, res, next) => {
     try{
@@ -50,34 +47,3 @@ exports.updateTransactionStatus = async (req, res, next) => {
     }
 }
 
-exports.premiumLeaderboard = async (req, res, next) => {
-    try{
-        // const expenses = await Expense.findAll({group: userId});
-        const sumOfPricePerUser = await Expense.findAll({
-            attributes: ['userId', [sequelize.fn('SUM', sequelize.col('amount')), 'totalPrice']],
-            group: ['userId'],
-            order: [[sequelize.col('totalPrice'), 'DESC']],
-          });
-
-        console.log("List is", sumOfPricePerUser);
-        return res.status(201).json(sumOfPricePerUser);  
-
-    } catch(err) {
-        console.log(err);
-    }
-}
-
-exports.findUserNameByExpenseUserId = async (req, res, next) => {
-    try {
-        const userId = req.body.userId;
-        const expense = await User.findOne({
-        where: { id: userId }
-      });
-
-        return res.status(201).json(expense);  
-
-    } catch (error) {
-      console.error('Error:', error);
-    }
-  }
-  
