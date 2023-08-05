@@ -1,4 +1,6 @@
+const { totalmem } = require('os');
 const Expense = require('../models/expense');
+const User = require('../models/user');
 const path = require('path');
 const rootDir = path.dirname(process.mainModule.filename);
 
@@ -21,13 +23,29 @@ exports.getAllExpenses = async (req, res, next) => {
 
 exports.addExpense = async (req, res, next) => {
     try{   
+        const userId = req.user.id;
         const { amount, description, category } = req.body;
-
+        
         if (amount == undefined || amount.length === 0 || description == undefined){
             res.status(404).json({message: 'Parameters are missing'});
         }
         // const expense = await Expense.create({amount, description, category, userId});
-        const expense = await req.user.createExpense({amount, description, category})
+        const expense = await req.user.createExpense({amount, description, category});
+
+        const user = await User.findAll({
+            attributes:['total_amount'],
+            where: {id: userId}
+        })
+
+        const prevAmount =  user[0].dataValues.total_amount;
+        let totalAmount;
+        if(prevAmount === null){
+            totalAmount = amount;
+        } else {
+            totalAmount = prevAmount + amount;
+        }
+
+        const promise1 = await req.user.update({total_amount: totalAmount});
         res.status(201).json({expense});
 
         }
