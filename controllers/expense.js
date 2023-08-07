@@ -2,6 +2,7 @@ const { totalmem } = require('os');
 const Expense = require('../models/expense');
 const User = require('../models/user');
 const path = require('path');
+const sequelize = require('../util/database');
 const rootDir = path.dirname(process.mainModule.filename);
 
 exports.loadExpensePage = (req, res, next) => {
@@ -23,54 +24,57 @@ exports.getAllExpenses = async (req, res, next) => {
 
 exports.addExpense = async (req, res, next) => {
     try{   
-        const userId = req.user.id;
+        const t = await sequelize.transaction();
+
         const { amount, description, category } = req.body;
         
         if (amount == undefined || amount.length === 0 || description == undefined){
             res.status(404).json({message: 'Parameters are missing'});
         }
         // const expense = await Expense.create({amount, description, category, userId});
-        const expense = await req.user.createExpense({amount, description, category});
+        const expense = await req.user.createExpense({amount, description, category}, {transaction: t});
 
-        const user = await User.findAll({
-            attributes:['total_amount'],
-            where: {id: userId}
-        })
+        const totalAmount = Number(req.user.totalAmount) + Number(amount);
 
-        const prevAmount =  user[0].dataValues.total_amount;
-        let totalAmount;
-        if(prevAmount === null){
-            totalAmount = amount;
-        } else {
-            totalAmount = prevAmount + amount;
-        }
-
-        const promise1 = await req.user.update({total_amount: totalAmount});
+        await req.user.update({totalAmount: totalAmount},{transaction: t});
+        await t.commit();
         res.status(201).json({expense});
 
         }
     catch(err){
-        console.log(err)
+        await t.rollback();
+        console.log(err);
+        return res.status(500).json({success: false, error: err});
     }
 }
 
 exports.deleteExpense = async (req, res, next) => {
     try{
+        const t = await sequelize.transaction();
         const expenseId = req.params.id;
         const userId = req.user.id;
 
         if(expenseId == undefined || expenseId.length === 0){
             return res.status(400).json({success: false})
         }
+        const expense = await Expense.findAll({where: {id : expenseId, userId : userId}});
+        const resultRows = await Expense.destroy({where: {id : expenseId, userId : userId}},{transaction: t})
+        // const resultRows = await expense.destroy({transaction: t})
 
-        const resultRows = await Expense.destroy({where: {id : expenseId, userId : userId}})
+
+        // console.log("deleted amount is>>>>>>>>>>>>>....",);
         if(resultRows === 0){
             return res.status(404).json({success: false, message: 'Expense doesnt belongs to the user'});
         }
-        
+        const totalAmount = Number(req.user.totalAmount) - Number(expense[0].dataValues.amount);
+
+        await req.user.update({totalAmount: totalAmount},{transaction: t});
+        await t.commit();
+
         return res.status(200).json({success: true, message: 'Deleted successfully'});
 
     } catch(err){
+        await t.rollback();
         console.log(err);
         return res.status(500).json({success: false, message: 'Failed'});
 
