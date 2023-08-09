@@ -47,11 +47,10 @@ try{
           email: email
         }
       })
-      console.log('user details>>>>>>>>>>>>>>>>>',user)
       if (user.length > 0){
         bcrypt.compare(password, user[0].password, (err, result) => {
             if(err){
-                // throw new Error('Something went wrong');
+                res.status(500).json(err);
             }
             if(result === true){
                 res.status(200).json({message: 'Successfully logged in', token: generateAccessToken(user[0].id), membership: user[0].ispremiumuser});
