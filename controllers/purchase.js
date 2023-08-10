@@ -36,7 +36,7 @@ exports.updateTransactionStatus = async (req, res, next) => {
         // await Promise.all(promise1, promise2);
 
         Promise.all([promise1, promise2]).then(() => {
-            return res.status(202).json({success: true, messgae: 'Transaction successful'});
+            return res.status(202).json({success: true, message: 'Transaction successful'});
         }).catch(err => {
             console.log(err);
         });
