@@ -59,10 +59,7 @@ exports.deleteExpense = async (req, res, next) => {
         }
         const expense = await Expense.findAll({where: {id : expenseId, userId : userId}});
         const resultRows = await Expense.destroy({where: {id : expenseId, userId : userId}},{transaction: t})
-        // const resultRows = await expense.destroy({transaction: t})
 
-
-        // console.log("deleted amount is>>>>>>>>>>>>>....",);
         if(resultRows === 0){
             return res.status(404).json({success: false, message: 'Expense doesnt belongs to the user'});
         }
