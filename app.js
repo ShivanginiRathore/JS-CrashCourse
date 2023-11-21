@@ -23,6 +23,7 @@ const Expense = require('./models/expense');
 const User = require('./models/user');
 const Order = require('./models/order');
 const ForgotPasswordRequest = require('./models/forgotPasswordRequest');
+const FileDownloaded = require('./models/fileDownloaded')
 
 app.use(bodyParser.json());
 // app.use(bodyParser.urlencoded({ extended: false }));
@@ -44,6 +45,9 @@ Order.belongsTo(User);
 
 User.hasMany(ForgotPasswordRequest);
 ForgotPasswordRequest.belongsTo(User);
+
+User.hasMany(FileDownloaded);
+FileDownloaded.belongsTo(User);
 
 sequelize.sync().then(result => {
     app.listen(3000);

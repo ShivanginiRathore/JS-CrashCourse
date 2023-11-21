@@ -4,6 +4,8 @@ const User = require('../models/user');
 const path = require('path');
 const sequelize = require('../util/database');
 const rootDir = path.dirname(process.mainModule.filename);
+const UserServices = require('../services/userservices');
+const S3Services = require('../services/S3services');
 
 exports.loadExpensePage = (req, res, next) => {
     res.sendFile(path.join(rootDir,'views','expense.html'));
@@ -75,5 +77,38 @@ exports.deleteExpense = async (req, res, next) => {
         console.log(err);
         return res.status(500).json({success: false, message: 'Failed'});
 
+    }
+}
+
+
+exports.downloadExpense = async(req, res, next) => {
+    try{
+        const expenses = await UserServices.getExpenses(req);
+        console.log(expenses);
+        const stringifiedExpenses = JSON.stringify(expenses);
+        // it should depend upon the user id
+        const userId = req.user.id;
+        const filename = `Expenses${userId}/${new Date()}.txt`;
+
+        const url = await S3Services.uploadToS3(stringifiedExpenses, filename);
+
+        const fileList = await req.user.createFileDownloaded({url});
+        // console.log("File List is-----------------",fileList);
+        res.status(200).json({fileList, success: true})
+    
+    } catch(err) {
+        console.log(err);
+        res.status(500).json({url: '', success: false})
+    }
+}
+
+exports.getDownloadedFiles = async(req, res, next) => {
+    try{
+        const filesDownloaded = await req.user.getFileDownloadeds()   
+        res.json(filesDownloaded);
+    }
+    catch(err) {
+        console.log(err)
+        return res.status(500).json({error: err, success: false})
     }
 }
