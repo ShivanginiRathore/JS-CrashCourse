@@ -52,6 +52,9 @@
             <h2 id="labelLeaderboard" >Leaderboard</h2>
             <ul id="listLeaderboard"></ul>
         </div>
+
+        <h2>Files Downloaded</h2>
+        <ul id="filesDownloaded"></ul>
     </section>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.3.6/axios.min.js"></script>
     <!-- <script src="./DOM.js"></script> -->
@@ -64,6 +67,7 @@
         const expenseCategory = document.getElementById('category');
         const ul = document.getElementById('expenses');
         const ulLeaderboard = document.getElementById('listLeaderboard');
+        const ulFilesDownloaded = document.getElementById('filesDownloaded');
 
         form.addEventListener('submit', storeAsObject);
         ul.addEventListener('click',removeItemFromUI);
@@ -90,6 +94,22 @@
             ul.appendChild(item);
         }
 
+        function showfilesOnUI(fileObj){
+
+            var a = document.createElement("a");
+            var breakLine = document.createElement("br");
+
+            var linkText = document.createTextNode(`File ${fileObj.id}`);
+            a.appendChild(linkText);
+            a.href = fileObj.url;
+            a.download = 'myexpense.csv';
+            ulFilesDownloaded.appendChild(a);
+            ulFilesDownloaded.appendChild(breakLine);
+
+            
+            console.log("files are ------------------->",fileObj);
+        }
+
         // to fetch all data from backend
         function allStorage() {
             window.addEventListener("DOMContentLoaded", async () => {
@@ -110,6 +130,11 @@
                 userExpenses.data.forEach(expense => {
                     showDataOnUI(expense);
                 });
+
+                const filesDownloaded = await axios.get("http://localhost:3000/getDownloadedFiles", {headers: {"Authorization":token}});
+                filesDownloaded.data.forEach(file => {
+                    showfilesOnUI(file);
+                })
             })
         }
         allStorage();
@@ -202,18 +227,20 @@
 
         async function download(){
             try{
-                const response = await axios.get('http://localhost:3000/user/download', { headers: {"Authorization" : token} })
+                const response = await axios.get('http://localhost:3000/download', { headers: {"Authorization" : token} })
             
-                if(response.status === 201){
+                if(response.status === 200){
                     var a = document.createElement("a");
-                    a.href = response.data.fileUrl;
+                    a.href = response.data.fileList.url;
                     a.download = 'myexpense.csv';
                     a.click();
+                    showfilesOnUI(response.data.fileList);
+
                 } else {
                     throw new Error(response.data.message)
                 }
             } catch(err) {
-                showError(err)
+                // showError(err)
             }       
         }
     </script>
