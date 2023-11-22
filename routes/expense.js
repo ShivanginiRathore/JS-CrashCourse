@@ -9,6 +9,9 @@ router.get('/expense', expenseController.loadExpensePage);
 
 router.get('/getExpenses',userAuthentication.authenticate, expenseController.getAllExpenses);
 
+// router.get('/getExpenses?page',userAuthentication.authenticate, expenseController.getAllExpenses);
+
+
 router.post('/expense',userAuthentication.authenticate, expenseController.addExpense);
 
 router.use('/deleteExpense/:id',userAuthentication.authenticate, expenseController.deleteExpense);
