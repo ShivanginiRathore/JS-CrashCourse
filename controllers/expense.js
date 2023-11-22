@@ -15,8 +15,28 @@ exports.getAllExpenses = async (req, res, next) => {
     try{
         const userId = req.user.id;
         // const expenses = req.user.getExpenses()   >>>>>>> Shorter query
-        const expenses = await Expense.findAll({where: {userId: userId}});
-        res.json(expenses);
+        // const expenses = await Expense.findAll({where: {userId: userId}});
+        // res.json(expenses);
+        const page = +req.query.page || 1;
+        let totalItems = 5;
+
+        const expenses = await Expense.findAll({
+            offset: (page - 1)* 2,
+            limit: 2,
+        });
+
+        res.json({
+            expenses: expenses,
+            currentPage: page,
+            hasNextPage: 2 * page < totalItems,
+            nextPage: page + 1,
+            hasPreviousPage: page > 1,
+            previousPage: page - 1,
+            lastPage: Math.ceil(totalItems / 2),
+
+        })
+
+
     }
     catch(err) {
         console.log(err)
