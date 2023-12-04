@@ -17,22 +17,26 @@ exports.getAllExpenses = async (req, res, next) => {
         // const expenses = req.user.getExpenses()   >>>>>>> Shorter query
         // const expenses = await Expense.findAll({where: {userId: userId}});
         // res.json(expenses);
+
         const page = +req.query.page || 1;
-        let totalItems = 5;
+        let pageSize = +req.query.rows;
+        let totalItems = 11;
+
+        // console.log("page size is >>>>>>>>>>>>>", pageSize);
 
         const expenses = await Expense.findAll({
-            offset: (page - 1)* 2,
-            limit: 2,
+            offset: (page - 1)* pageSize,
+            limit: pageSize,
         });
 
         res.json({
             expenses: expenses,
             currentPage: page,
-            hasNextPage: 2 * page < totalItems,
+            hasNextPage: pageSize * page < totalItems,
             nextPage: page + 1,
             hasPreviousPage: page > 1,
             previousPage: page - 1,
-            lastPage: Math.ceil(totalItems / 2),
+            lastPage: Math.ceil(totalItems / pageSize),
 
         })
 

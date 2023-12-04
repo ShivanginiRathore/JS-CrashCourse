@@ -43,7 +43,7 @@
             <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
             <button id="showLeaderboard" >Show Leaderboard</button>
         </section>
-        <button onclick="download()" id="downloadExpense">Download File</button>
+        <!-- <button onclick="download()" id="downloadExpense">Download File</button> -->
 
         <h2>Expenses</h2>
         <ul id="expenses"></ul>
@@ -53,8 +53,15 @@
             <ul id="listLeaderboard"></ul>
         </div>
 
-        <h2>Files Downloaded</h2>
-        <ul id="filesDownloaded"></ul>
+        <!-- <h2>Files Downloaded</h2> -->
+        <!-- <ul id="filesDownloaded"></ul> -->
+        <label for="expenseList">Rows per page: </label>
+        <select name="expenseList" id="expenseList" onchange="dynamicPagination()">
+            <option value="5" selected="true">5</option>
+            <option value="10">10</option>
+            <option value="15">15</option>
+            <option value="20">20</option>
+        </select>
 
         <div id="pagination">
 
@@ -73,9 +80,11 @@
         const ulLeaderboard = document.getElementById('listLeaderboard');
         const ulFilesDownloaded = document.getElementById('filesDownloaded');
         const pagination = document.getElementById('pagination');
+        // const dynamicPagination = document.getElementById('expensesList');
         
         form.addEventListener('submit', storeAsObject);
         // ul.addEventListener('click',removeItemFromUI);
+        // dynamicPagination.addEventListener('select', dynamicPagination);
 
 
         function showDataOnUI(obj){
@@ -113,7 +122,6 @@
             // console.log("files are ------------------->",fileObj);
         }
 
-        // to fetch all data from backend
         function showPagination({
             currentPage,
             hasNextPage,
@@ -147,7 +155,9 @@
 
         async function getProducts(page){
             console.log("page is -- ",page)
-            const userExpenses = await axios.get(`http://localhost:3000/getExpenses?page=${page}`, {headers: {"Authorization": token}});
+            const rows = document.getElementById("expenseList").value;
+            console.log(rows);
+            const userExpenses = await axios.get(`http://localhost:3000/getExpenses?page=${page}&rows=${rows}`, {headers: {"Authorization": token}});
             console.log(userExpenses)
                 userExpenses.data.expenses.forEach(expense => {
                     showDataOnUI(expense);
@@ -170,12 +180,16 @@
 
                 }
                 const page = 1;
+                // const rows = document.getElementById("expenseList").value =;
+                const rows = localStorage.getItem('pageSize')===null ?  document.getElementById("expenseList").value : localStorage.getItem('pageSize');
+                 
+                console.log(rows);
                 // const userExpenses = await axios.get("http://localhost:3000/getExpenses", {headers: {"Authorization": token}});
                 // userExpenses.data.forEach(expense => {
                 //     showDataOnUI(expense);
                 // });
 
-                const userExpenses = await axios.get(`http://localhost:3000/getExpenses?page=${page}`, {headers: {"Authorization": token}});
+                const userExpenses = await axios.get(`http://localhost:3000/getExpenses?page=${page}&rows=${rows}`, {headers: {"Authorization": token}});
                 userExpenses.data.expenses.forEach(expense => {
                     showDataOnUI(expense);
                 });
@@ -189,8 +203,20 @@
         }
         allStorage();
 
+       async function dynamicPagination(){
+            const token = localStorage.getItem('token');
+            const page = 1;
+            const rows = document.getElementById("expenseList").value;
+            localStorage.setItem('pageSize',rows);
+            console.log("in dynamic pagination rows are :", rows)
 
-
+            const userExpenses = await axios.get(`http://localhost:3000/getExpenses?page=${page}&rows=${rows}`, {headers: {"Authorization": token}});
+                userExpenses.data.expenses.forEach(expense => {
+                    showDataOnUI(expense);
+                });
+                showPagination(userExpenses.data);
+        }
+        
         async function storeAsObject(e){
             e.preventDefault();
             let amount = expenseAmount.value;
@@ -251,7 +277,6 @@
             })
         }
 
-
         async function showDataOnLeaderboard(leaderboardData){
 
             let visibleText = `Name - ${leaderboardData.name} & Total expense - ${leaderboardData.totalAmount}`;
@@ -291,6 +316,7 @@
                 // showError(err)
             }       
         }
+    
     </script>
 </body>
 </html>
