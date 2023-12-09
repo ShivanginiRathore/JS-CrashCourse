@@ -20,9 +20,7 @@ exports.getAllExpenses = async (req, res, next) => {
 
         const page = +req.query.page || 1;
         let pageSize = +req.query.rows;
-        let totalItems = 11;
-
-        // console.log("page size is >>>>>>>>>>>>>", pageSize);
+        let totalItems = 13;
 
         const expenses = await Expense.findAll({
             offset: (page - 1)* pageSize,

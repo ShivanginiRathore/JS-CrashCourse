@@ -80,7 +80,7 @@
         const ulLeaderboard = document.getElementById('listLeaderboard');
         const ulFilesDownloaded = document.getElementById('filesDownloaded');
         const pagination = document.getElementById('pagination');
-        // const dynamicPagination = document.getElementById('expensesList');
+        const expenseList = document.getElementById('expenseList');
         
         form.addEventListener('submit', storeAsObject);
         // ul.addEventListener('click',removeItemFromUI);
@@ -145,7 +145,7 @@
             pagination.appendChild(btn1)
 
             if(hasNextPage) {
-                console.log('inside next page btn')
+                console.log('inside next page btn',nextPage);
                 const btn3 = document.createElement('button')
                 btn3.innerHTML = nextPage
                 btn3.addEventListener('click', () => getProducts(nextPage))
@@ -154,14 +154,14 @@
         }
 
         async function getProducts(page){
-            console.log("page is -- ",page)
             const rows = document.getElementById("expenseList").value;
-            console.log(rows);
             const userExpenses = await axios.get(`http://localhost:3000/getExpenses?page=${page}&rows=${rows}`, {headers: {"Authorization": token}});
-            console.log(userExpenses)
-                userExpenses.data.expenses.forEach(expense => {
+            ul.innerHTML = '';    
+            userExpenses.data.expenses.forEach(expense => {
                     showDataOnUI(expense);
                 });
+
+                showPagination(userExpenses.data);
         }
 
         function allStorage() {
@@ -182,7 +182,7 @@
                 const page = 1;
                 // const rows = document.getElementById("expenseList").value =;
                 const rows = localStorage.getItem('pageSize')===null ?  document.getElementById("expenseList").value : localStorage.getItem('pageSize');
-                 
+                expenseList.value = rows;
                 console.log(rows);
                 // const userExpenses = await axios.get("http://localhost:3000/getExpenses", {headers: {"Authorization": token}});
                 // userExpenses.data.forEach(expense => {
@@ -208,12 +208,13 @@
             const page = 1;
             const rows = document.getElementById("expenseList").value;
             localStorage.setItem('pageSize',rows);
-            console.log("in dynamic pagination rows are :", rows)
+            // console.log("in dynamic pagination rows are :", rows)
 
             const userExpenses = await axios.get(`http://localhost:3000/getExpenses?page=${page}&rows=${rows}`, {headers: {"Authorization": token}});
                 userExpenses.data.expenses.forEach(expense => {
                     showDataOnUI(expense);
                 });
+                console.log(userExpenses.data)
                 showPagination(userExpenses.data);
         }
         

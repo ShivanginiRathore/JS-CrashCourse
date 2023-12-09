@@ -1,15 +1,30 @@
 const path = require('path');
+const fs = require('fs');
 
 const express = require('express');
 const bodyParser = require('body-parser');
+
+const helmet = require('helmet');
+const compression = require('compression');
+const morgan = require('morgan');
+
+
+
 
 const sequelize = require('./util/database');
 var cors = require('cors');
 
 const app = express();
 
-app.use(cors());
+const accessLogStream = fs.createWriteStream(
+    path.join(__dirname, 'access.log'), 
+    {flags:'a'}
+);
 
+// app.use(helmet());
+// app.use(compression());
+app.use(morgan('combined',{stream: accessLogStream}));
+app.use(cors());
 app.set('views', 'views');
 
 const userRoutes = require('./routes/user');
@@ -50,7 +65,11 @@ User.hasMany(FileDownloaded);
 FileDownloaded.belongsTo(User);
 
 sequelize.sync().then(result => {
-    app.listen(3000);
+    app.listen(3000,() => {
+    console.log("server started");
+
+    })
+
 })
 .catch(err => console.log(err));
 
