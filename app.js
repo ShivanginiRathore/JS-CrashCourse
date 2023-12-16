@@ -8,13 +8,14 @@ const helmet = require('helmet');
 const compression = require('compression');
 const morgan = require('morgan');
 
-
-
-
-const sequelize = require('./util/database');
 var cors = require('cors');
 
 const app = express();
+const dotenv = require('dotenv');
+dotenv.config();
+
+const sequelize = require('./util/database');
+
 
 const accessLogStream = fs.createWriteStream(
     path.join(__dirname, 'access.log'), 
@@ -65,10 +66,7 @@ User.hasMany(FileDownloaded);
 FileDownloaded.belongsTo(User);
 
 sequelize.sync().then(result => {
-    app.listen(3000,() => {
-    console.log("server started");
-
-    })
+    app.listen(3000);
 
 })
 .catch(err => console.log(err));
