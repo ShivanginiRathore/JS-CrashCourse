@@ -1,21 +1,17 @@
 const path = require('path');
 const fs = require('fs');
-
 const express = require('express');
 const bodyParser = require('body-parser');
-
 const helmet = require('helmet');
 const compression = require('compression');
 const morgan = require('morgan');
 
 var cors = require('cors');
-
 const app = express();
 const dotenv = require('dotenv');
 dotenv.config();
 
 const sequelize = require('./util/database');
-
 
 const accessLogStream = fs.createWriteStream(
     path.join(__dirname, 'access.log'), 
@@ -42,9 +38,7 @@ const ForgotPasswordRequest = require('./models/forgotPasswordRequest');
 const FileDownloaded = require('./models/fileDownloaded')
 
 app.use(bodyParser.json());
-// app.use(bodyParser.urlencoded({ extended: false }));
-
-app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.static('public'));
 
 app.use(userRoutes);
 app.use(expenseRoutes);
@@ -65,8 +59,11 @@ ForgotPasswordRequest.belongsTo(User);
 User.hasMany(FileDownloaded);
 FileDownloaded.belongsTo(User);
 
+const PORT = process.env.PORT;
+console.log(PORT);
+
 sequelize.sync().then(result => {
-    app.listen(3000);
+    app.listen(PORT);
 
 })
 .catch(err => console.log(err));

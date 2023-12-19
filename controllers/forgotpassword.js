@@ -6,7 +6,6 @@ const User = require('../models/user');
 const { v4: uuidv4 } = require('uuid');
 const Sib = require('@getbrevo/brevo');
 const { where } = require('sequelize');
-// const Sib = require('sib-api-v3-sdk');
 
 const bcrypt = require('bcrypt');
 
