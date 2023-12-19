@@ -14,9 +14,6 @@ exports.loadExpensePage = (req, res, next) => {
 exports.getAllExpenses = async (req, res, next) => {
     try{
         const userId = req.user.id;
-        // const expenses = req.user.getExpenses()   >>>>>>> Shorter query
-        // const expenses = await Expense.findAll({where: {userId: userId}});
-        // res.json(expenses);
 
         const page = +req.query.page || 1;
         let pageSize = +req.query.rows;
@@ -115,7 +112,6 @@ exports.downloadExpense = async(req, res, next) => {
         const url = await S3Services.uploadToS3(stringifiedExpenses, filename);
 
         const fileList = await req.user.createFileDownloaded({url});
-        // console.log("File List is-----------------",fileList);
         res.status(200).json({fileList, success: true})
     
     } catch(err) {
