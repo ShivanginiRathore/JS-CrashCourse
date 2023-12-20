@@ -81,3 +81,5 @@
 ::1 - - [19/Dec/2023:09:22:18 +0000] "GET /signup HTTP/1.1" 304 - "http://localhost:3000/login" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
 ::1 - - [19/Dec/2023:09:22:18 +0000] "GET /js/signup.js HTTP/1.1" 200 1038 "http://localhost:3000/signup" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
 ::1 - - [19/Dec/2023:09:22:29 +0000] "POST /siggnup HTTP/1.1" 404 147 "http://localhost:3000/signup" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
+::1 - - [19/Dec/2023:11:44:53 +0000] "GET /login HTTP/1.1" 304 - "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
+::1 - - [19/Dec/2023:11:44:54 +0000] "GET /js/login.js HTTP/1.1" 304 - "http://localhost:3000/login" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
