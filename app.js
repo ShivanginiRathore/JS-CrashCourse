@@ -5,6 +5,7 @@ const bodyParser = require('body-parser');
 const helmet = require('helmet');
 const compression = require('compression');
 const morgan = require('morgan');
+const mongoose = require('mongoose')
 
 var cors = require('cors');
 const app = express();
@@ -34,8 +35,8 @@ const forgotpasswordRoutes = require('./routes/forgotpassword');
 const Expense = require('./models/expense');
 const User = require('./models/user');
 const Order = require('./models/order');
-const ForgotPasswordRequest = require('./models/forgotPasswordRequest');
-const FileDownloaded = require('./models/fileDownloaded')
+const ForgotPasswordRequest = require('./models/forgot-password-request');
+const FileDownloaded = require('./models/file-download')
 
 app.use(bodyParser.json());
 app.use(express.static('public'));
@@ -44,27 +45,40 @@ app.use(userRoutes);
 app.use(expenseRoutes);
 app.use(purchaseRoutes);
 app.use(premiumRoutes);
-app.use('/password',forgotpasswordRoutes);
+// app.use('/password',forgotpasswordRoutes);
 
 
-User.hasMany(Expense);
-Expense.belongsTo(User);
+// User.hasMany(Expense);
+// Expense.belongsTo(User);
 
-User.hasMany(Order);
-Order.belongsTo(User);
+// User.hasMany(Order);
+// Order.belongsTo(User);
 
-User.hasMany(ForgotPasswordRequest);
-ForgotPasswordRequest.belongsTo(User);
+// User.hasMany(ForgotPasswordRequest);
+// ForgotPasswordRequest.belongsTo(User);
 
-User.hasMany(FileDownloaded);
-FileDownloaded.belongsTo(User);
+// User.hasMany(FileDownloaded);
+// FileDownloaded.belongsTo(User);
 
 const PORT = process.env.PORT;
-console.log(PORT);
+// console.log(PORT);
 
-sequelize.sync().then(result => {
-    app.listen(PORT);
+mongoose
+  .connect(
+    'mongodb+srv://shivanginiatcs:Mongodb123@cluster0.ufuvak9.mongodb.net/expense'
+  )
+  .then(result => {
+    app.listen(3000, () => {
+        console.log('Server is running')
+    });
+  })
+  .catch(err => {
+    console.log(err);
+  });
 
-})
-.catch(err => console.log(err));
+// sequelize.sync().then(result => {
+//     app.listen(PORT);
+
+// })
+// .catch(err => console.log(err));
 

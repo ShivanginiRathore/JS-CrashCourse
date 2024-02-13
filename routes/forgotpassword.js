@@ -10,8 +10,6 @@ router.get('/forgotpassword', passwordController.loadPage);
 
 router.post('/forgotpassword',userAuthentication.authenticate, passwordController.sendEmail);
 
-router.post('/forgotpassword',userAuthentication.authenticate, passwordController.sendEmail);
-
 router.post('/resetpassword',userAuthentication.authenticate, passwordController.updatePassword);
 
 router.use('/resetpassword/:id', passwordController.resetPassword);

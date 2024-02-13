@@ -43,7 +43,7 @@
             <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
             <button id="showLeaderboard" >Show Leaderboard</button>
         </section>
-        <!-- <button onclick="download()" id="downloadExpense">Download File</button> -->
+        <button onclick="download()" id="downloadExpense">Download File</button>
 
         <h2>Expenses</h2>
         <ul id="expenses"></ul>
@@ -53,8 +53,7 @@
             <ul id="listLeaderboard"></ul>
         </div>
 
-        <!-- <h2>Files Downloaded</h2> -->
-        <!-- <ul id="filesDownloaded"></ul> -->
+        
         <label for="expenseList">Rows per page: </label>
         <select name="expenseList" id="expenseList" onchange="dynamicPagination()">
             <option value="5" selected="true">5</option>
@@ -66,6 +65,10 @@
         <div id="pagination">
 
         </div>
+
+        <h2>Files Downloaded</h2>
+        <ul id="filesDownloaded"></ul>
+        
     </section>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.3.6/axios.min.js"></script>
     <script src="/js/expense.js"></script>

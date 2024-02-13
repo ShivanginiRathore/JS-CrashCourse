@@ -7,8 +7,8 @@ exports.authenticate = async (req, res, next) => {
         // console.log(token);
         const userObj = jwt.verify(token, 'longtoken');
         // console.log("USER ID >>>>>>>>>>>>",userObj.userId)
-        const user = await User.findByPk(userObj.userId);
-        // console.log(JSON.stringify(user));
+        const user = await User.findById(userObj.userId);
+        // console.log('Logged in user details are as follows>>>>>>>>>>>>>>>>>>', user);
         req.user = user;
         next();
 
