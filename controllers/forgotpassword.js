@@ -1,7 +1,7 @@
 const path = require('path');
 const rootDir = path.dirname(process.mainModule.filename);
 
-const forgotPasswordRequest = require('../models/forgotPasswordRequest');
+const forgotPasswordRequest = require('../models/forgot-password-request');
 const User = require('../models/user');
 const { v4: uuidv4 } = require('uuid');
 const Sib = require('@getbrevo/brevo');
@@ -23,7 +23,7 @@ exports.sendEmail = async (req, res, next) => {
         const userId = req.user.id;
 
         const id = uuidv4();
-        const mailContent = `http://localhost:3000/password/resetpassword/${id}`;
+        const mailContent = `${process.env.WEBSITE}/password/resetpassword/${id}`;
 
         const response = await req.user.createForgotPasswordRequest({id, isActive: true});
 

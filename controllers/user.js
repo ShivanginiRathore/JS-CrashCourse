@@ -23,8 +23,15 @@ try{
     }
 // salt rounds = 10
     bcrypt.hash(password, 10, async (err, hash) => {
-        console.log(err);
-        await User.create({name, email, password: hash})
+        const user = new User({
+            name: name,
+            email: email,
+            password: hash,
+            isPremiumUser: false
+        });
+        await user.save();
+    
+        // await User.create({name, email, password: hash})
         res.status(201).json({message: 'Successfully created new user'});
     })
     
@@ -41,26 +48,22 @@ function generateAccessToken(id){
 exports.loginUser = async (req, res, next) => {
 try{
     const { email, password } = req.body;
-
-    const user = await User.findAll({
-        where: {
-          email: email
-        }
-      })
+    const user = await User.find({ email: email})
+    
       if (user.length > 0){
         bcrypt.compare(password, user[0].password, (err, result) => {
             if(err){
                 res.status(500).json(err);
             }
             if(result === true){
-                res.status(200).json({message: 'Successfully logged in', token: generateAccessToken(user[0].id), membership: user[0].ispremiumuser});
+                res.status(200).json({message: 'Successfully logged in', token: generateAccessToken(user[0].id), membership: user[0].isPremiumUser});
 
             } else {
-                res.status(401).json({message: 'Incorrect password'});
+                res.status(201).json({message: 'Incorrect password'});
             }
         })        
       } else {
-        res.status(404).json({message: 'User not exists! Check your email Id or Signup'});
+        res.status(201).json({message: 'User not exists! Check your email Id or Signup'});
       } 
 }
     catch(err){

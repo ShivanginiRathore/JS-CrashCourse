@@ -27,8 +27,7 @@ function showDataOnUI(obj){
 
     editBtn.textContent = 'Edit';
     editBtn.classList = 'edit button';
-    item.setAttribute('id',obj.id);
-
+    item.setAttribute('id',obj._id);
     
     item.appendChild(document.createTextNode(visibleText));
     item.appendChild(btn);
@@ -110,11 +109,7 @@ function allStorage() {
         // const rows = document.getElementById("expenseList").value =;
         const rows = localStorage.getItem('pageSize')===null ?  document.getElementById("expenseList").value : localStorage.getItem('pageSize');
         expenseList.value = rows;
-        console.log(rows);
-        // const userExpenses = await axios.get("http://localhost:3000/getExpenses", {headers: {"Authorization": token}});
-        // userExpenses.data.forEach(expense => {
-        //     showDataOnUI(expense);
-        // });
+        // console.log(rows);
 
         const userExpenses = await axios.get(`/getExpenses?page=${page}&rows=${rows}`, {headers: {"Authorization": token}});
         userExpenses.data.expenses.forEach(expense => {
@@ -130,20 +125,20 @@ function allStorage() {
 }
 allStorage();
 
-async function dynamicPagination(){
-    const token = localStorage.getItem('token');
-    const page = 1;
-    const rows = document.getElementById("expenseList").value;
-    localStorage.setItem('pageSize',rows);
-    // console.log("in dynamic pagination rows are :", rows)
+// async function dynamicPagination(){
+//     const token = localStorage.getItem('token');
+//     const page = 1;
+//     const rows = document.getElementById("expenseList").value;
+//     localStorage.setItem('pageSize',rows);
+//     // console.log("in dynamic pagination rows are :", rows)
 
-    const userExpenses = await axios.get(`/getExpenses?page=${page}&rows=${rows}`, {headers: {"Authorization": token}});
-        userExpenses.data.expenses.forEach(expense => {
-            showDataOnUI(expense);
-        });
-        console.log(userExpenses.data)
-        showPagination(userExpenses.data);
-}
+//     const userExpenses = await axios.get(`/getExpenses?page=${page}&rows=${rows}`, {headers: {"Authorization": token}});
+//         userExpenses.data.expenses.forEach(expense => {
+//             showDataOnUI(expense);
+//         });
+//         console.log(userExpenses.data)
+//         showPagination(userExpenses.data);
+// }
 
 async function storeAsObject(e){
     e.preventDefault();
@@ -179,9 +174,10 @@ async function removeItemFromUI(e){
 
 document.getElementById('buyPremium').onclick = async function(e){
     const response = await axios.get('/purchasePremium',{headers: {"Authorization": token}});
+    console.log('response of payment>>>>>>>>>', response)
     var options = {
         "key": response.data.key_id,
-        "order_id": response.data.order.id,
+        "order_id": response.data.order1.orderId,
         "handler": async function(response) {
             await axios.post('/updatetransactionstatus',{
                 order_id: options.order_id,

@@ -1,5 +1,6 @@
 const Razorpay = require('razorpay');
 const Order = require('../models/order');
+const User = require('../models/user')
 
 exports.purchasePremium = (req, res, next) => {
     try{
@@ -15,9 +16,16 @@ exports.purchasePremium = (req, res, next) => {
                 throw new Error(JSON.stringify(err));
             }
 
-            await req.user.createOrder({orderid: order.id, status: 'PENDING'});
+            const newOrder = new Order({
+                orderId: order.id,
+                status: 'PENDING',
+                userId: req.user
+            })
+            const order1 = await newOrder.save()
 
-            return res.status(201).json({order, key_id : rzp.key_id});
+            // await req.user.createOrder({orderid: order.id, status: 'PENDING'});
+
+            return res.status(201).json({order1, key_id : rzp.key_id});
 
         }) 
     } catch(err){
@@ -29,12 +37,18 @@ exports.purchasePremium = (req, res, next) => {
 exports.updateTransactionStatus = async (req, res, next) => {
     try{
         const {payment_id, order_id} = req.body;
-        const order = await Order.findOne({where: {orderid : order_id}});
-        
-        const promise1 = order.update({paymentid: payment_id, status: 'SUCCESSFUL'});
-        const promise2 = req.user.update({ispremiumuser: true});
-        // await Promise.all(promise1, promise2);
 
+        // console.log(`payment id>>>> ${payment_id}, order is>>>>>.... ${order_id}`)
+
+        const filter = { orderId: order_id };
+        const update = {paymentId: payment_id, status: 'SUCCESSFUL'}
+        
+        const promise1 = Order.findOneAndUpdate(filter, update);
+        
+        const filter2 = { _id: req.user };
+        const update2 = {isPremiumUser: true};
+        const promise2 = User.findOneAndUpdate(filter2, update2);
+        
         Promise.all([promise1, promise2]).then(() => {
             return res.status(202).json({success: true, message: 'Transaction successful'});
         }).catch(err => {

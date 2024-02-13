@@ -5,9 +5,7 @@ const User = require('../models/user');
 exports.premiumLeaderboard = async (req, res, next) => {
     try{
 
-      const leaderboardofUsers = await User.findAll({
-        order: [['totalAmount', 'DESC']]
-      })
+        const leaderboardofUsers = await User.find().sort({ totalAmount: -1 })
         
         return res.status(201).json(leaderboardofUsers);  
 
