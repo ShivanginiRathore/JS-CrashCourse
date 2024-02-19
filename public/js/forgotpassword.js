@@ -10,7 +10,7 @@
                 let emailDetails = {
                     email : e.target.email.value,
                 }
-                const response = await axios.post("/password/forgotpassword",emailDetails,{headers: {"Authorization": token}})
+                const response = await axios.post("/password/forgotpassword",emailDetails)
                 if(response.status === 201){
                     document.body.innerHTML += `<div style="color:green;"> Reset password link has been sent to your email ID </div>`;
                 }

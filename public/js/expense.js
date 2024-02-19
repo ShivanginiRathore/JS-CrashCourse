@@ -11,7 +11,7 @@ const pagination = document.getElementById('pagination');
 const expenseList = document.getElementById('expenseList');
 
 form.addEventListener('submit', storeAsObject);
-// ul.addEventListener('click',removeItemFromUI);
+ul.addEventListener('click',removeItemFromUI);
 // dynamicPagination.addEventListener('select', dynamicPagination);
 
 
@@ -40,7 +40,7 @@ function showfilesOnUI(fileObj){
     var a = document.createElement("a");
     var breakLine = document.createElement("br");
 
-    var linkText = document.createTextNode(`File ${fileObj.id}`);
+    var linkText = document.createTextNode(`File ${fileObj._id}`);
     a.appendChild(linkText);
     a.href = fileObj.url;
     a.download = 'myexpense.csv';
@@ -165,9 +165,17 @@ async function removeItemFromUI(e){
 
     if(e.target.classList.contains('button')){
         let id = e.target.parentNode.id;  
-    const token = localStorage.getItem('token');
-
+        const token = localStorage.getItem('token');
         await axios.delete(`/deleteExpense/${id}`,{headers: {"Authorization": token}})
+
+        if(e.target.classList.contains('edit')){
+            let arrDetails = e.target.parentNode.firstChild.textContent.split('-');
+            console.log('Array details are >>>>>>>>>>>>>>> ',arrDetails)
+
+            expenseAmount.value = arrDetails[0]
+            expenseDesc.value = arrDetails[1]
+            expenseCategory.value = arrDetails[2]
+        } 
         ul.removeChild(e.target.parentNode);
     }
 }
@@ -225,7 +233,7 @@ document.getElementById('showLeaderboard').onclick = async function(e) {
 async function download(){
     try{
         const response = await axios.get('/download', { headers: {"Authorization" : token} })
-    
+        console.log(response)
         if(response.status === 200){
             var a = document.createElement("a");
             a.href = response.data.fileList.url;

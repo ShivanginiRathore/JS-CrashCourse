@@ -18,7 +18,9 @@ exports.getAllExpenses = async (req, res, next) => {
 
         const page = +req.query.page || 1;
         let pageSize = +req.query.rows;
-        let totalItems = 13;
+        let totalItems = await Expense.countDocuments({userId: req.user});
+
+        // console.log('Total number of expenses for user ', userId, totalItems)
 
         const expenses = await Expense.find({userId: req.user})
             .skip((page - 1) * pageSize) 
@@ -46,8 +48,6 @@ exports.addExpense = async (req, res, next) => {
     const session = await mongoose.startSession();
     session.startTransaction();
     try{   
-        // const t = await sequelize.transaction();
-        
         const { amount, description, category } = req.body;
         
         if (amount == undefined || amount.length === 0 || description == undefined){
@@ -65,17 +65,14 @@ exports.addExpense = async (req, res, next) => {
         const totalAmount = Number(req.user.totalAmount) + Number(amount);
 
         // await req.user.update({totalAmount: totalAmount},{transaction: t});
-        // const filter = { orderId: order_id };
-        // const update = {paymentId: payment_id, status: 'SUCCESSFUL'}
         
-        const promise1 = await User.findOneAndUpdate({_id:req.user}, {totalAmount: totalAmount});
+        await User.findOneAndUpdate({_id:req.user}, {totalAmount: totalAmount});
         // await t.commit();
         await session.commitTransaction();
         session.endSession();
         res.status(201).json({expense});
 
-        }
-    catch(err){
+    } catch(err){
         // await t.rollback();
         await session.abortTransaction();
         session.endSession();
@@ -85,29 +82,39 @@ exports.addExpense = async (req, res, next) => {
 }
 
 exports.deleteExpense = async (req, res, next) => {
+    const session = await mongoose.startSession();
+    session.startTransaction();
     try{
-        const t = await sequelize.transaction();
+        // const t = await sequelize.transaction();
         const expenseId = req.params.id;
-        const userId = req.user.id;
-
+        const userId = req.user._id;
+        // console.log('expense id >>>>>>>>>>>>>>>>>>>>>>>>>>>>>> ', expenseId)
+        
         if(expenseId == undefined || expenseId.length === 0){
             return res.status(400).json({success: false})
         }
-        const expense = await Expense.findAll({where: {id : expenseId, userId : userId}});
-        const resultRows = await Expense.destroy({where: {id : expenseId, userId : userId}},{transaction: t})
+        
+        const deletedExpense = await Expense.findOneAndDelete({ _id: expenseId, userId: userId });
+        // console.log('deletedExpense is >>>>>>>>>>>>>>>>>>>>', deletedExpense);
 
-        if(resultRows === 0){
+        if(deletedExpense){
+            const totalAmount = Number(req.user.totalAmount) - Number(deletedExpense.amount);
+
+            req.user.totalAmount = totalAmount;
+            req.user.save();
+            await session.commitTransaction();
+            session.endSession();
+            return res.status(200).json({success: true, message: 'Deleted successfully'});
+
+        } else{
             return res.status(404).json({success: false, message: 'Expense doesnt belongs to the user'});
         }
-        const totalAmount = Number(req.user.totalAmount) - Number(expense[0].dataValues.amount);
-
-        await req.user.update({totalAmount: totalAmount},{transaction: t});
-        await t.commit();
-
-        return res.status(200).json({success: true, message: 'Deleted successfully'});
+        
 
     } catch(err){
-        await t.rollback();
+        // await t.rollback();
+        await session.abortTransaction();
+        session.endSession();
         console.log(err);
         return res.status(500).json({success: false, message: 'Failed'});
 
@@ -120,13 +127,14 @@ exports.downloadExpense = async(req, res, next) => {
         // const expenses = await UserServices.getExpenses(req);
         
         const expenses = await Expense.find({userId: req.user})
-        console.log(expenses);
+        // console.log(expenses);
         const stringifiedExpenses = JSON.stringify(expenses);
         // it should depend upon the user id
         const userId = req.user._id;
         const filename = `Expenses${userId}/${new Date()}.txt`;
 
         const url = await S3Services.uploadToS3(stringifiedExpenses, filename);
+        // console.log('url is >>>>>>>>>>>>>>>>.. ',url)
         const fileDownloaded = new FileDownloaded({
             url: url,
             userId: req.user

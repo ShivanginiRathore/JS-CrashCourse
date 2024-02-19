@@ -1,6 +1,6 @@
 const express = require('express');
 
-const passwordController = require('../controllers/forgotpassword');
+const passwordController = require('../controllers/forgotPassword');
 const userAuthentication = require('../middleware/auth');
 
 
@@ -8,10 +8,10 @@ const router = express.Router();
 
 router.get('/forgotpassword', passwordController.loadPage);
 
-router.post('/forgotpassword',userAuthentication.authenticate, passwordController.sendEmail);
+router.post('/forgotpassword', passwordController.sendEmail);
 
-router.post('/resetpassword',userAuthentication.authenticate, passwordController.updatePassword);
+router.get('/resetpassword/:id', passwordController.resetPassword);
 
-router.use('/resetpassword/:id', passwordController.resetPassword);
+router.post('/resetpassword', passwordController.updatePassword);
 
 module.exports = router;
